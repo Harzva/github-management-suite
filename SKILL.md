@@ -91,3 +91,11 @@ Read `references/operations-matrix.md` when choosing the correct tool for clone,
 - Before public publishing, improve README structure with `$readme-design` and verify badges/links reflect actual repo capabilities.
 - For public subscriber-facing repositories, provide a concise README, clear install/use path, and a troubleshooting command that works outside the owner's machine.
 - After changes, report what was changed, what remote URL/branch/release/page was touched, and what still needs GitHub-side verification.
+
+## Public Repository Quality Gate
+
+Before publishing a public repository, check three traits explicitly:
+
+- **Professional:** clear project positioning, truthful claims, license, tested commands, clean Git status, and no committed secrets or machine-local paths.
+- **Beautiful:** a polished first-screen README with useful visual proof, restrained badges, readable structure, and screenshots or diagrams when they clarify the project.
+- **Universal:** install/use instructions that work for people outside the owner's machine, with portable paths, generic account guidance, and Windows/macOS/Linux notes where relevant.
