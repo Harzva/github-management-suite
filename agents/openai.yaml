@@ -1,4 +1,4 @@
 interface:
   display_name: "GitHub Management Suite"
-  short_description: "Full GitHub workflow management"
-  default_prompt: "Use $github-management-suite to manage this repository across pull, push, issues, Actions, releases, Pages, README, and upload troubleshooting."
+  short_description: "Full GitHub ops, release, and recovery"
+  default_prompt: "Use $github-management-suite to publish or manage this repository across pull, push, issues, PRs, Actions, Releases, Pages, README polish, and upload recovery."
