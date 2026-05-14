@@ -1,18 +1,44 @@
 ---
 name: github-management-suite
-description: "Manage the full GitHub repository lifecycle across platforms: clone, pull, branch, commit, push, account routing, remotes, pull requests, issues, Actions, Releases, GitHub Pages, README optimization, and upload failure recovery. Use when Codex needs to publish or synchronize code, create or repair repositories, operate GitHub issues/PRs, configure CI/CD workflows, upload release assets, deploy Pages, diagnose push failures, or coordinate with `$gh-account-router`, `$gh-actions-release-builder`, `$readme-design`, and `$software-dev-pipeline`."
+description: "Cross-platform GitHub operations suite for repository management, clone/pull/fetch/branch/commit/push, account routing, remotes, issues, pull requests, reviews, Actions, Releases, GitHub Pages, README optimization, and upload failure recovery. Use when Codex needs to publish or synchronize code, create or repair repositories, operate GitHub issues/PRs, configure CI/CD workflows, upload release assets, deploy Pages, diagnose push failures, prepare a public GitHub project, or coordinate with `$gh-account-router`, `$gh-actions-release-builder`, `$readme-design`, and `$software-dev-pipeline`."
 ---
 
 # GitHub Management Suite
 
-Use this skill as the top-level GitHub operating guide. It is intentionally cross-platform: prefer commands and workflows that work on Windows PowerShell, macOS/Linux shells, and GitHub-hosted runners. When platform-specific syntax matters, state it explicitly.
+Use this skill as the top-level GitHub operating guide. It should feel smooth for the local owner and for subscribers who do not share the owner's paths, tokens, aliases, or operating system.
+
+Prefer portable GitHub workflows first: normal `git`, `gh`, GitHub REST API, and GitHub Actions. Use owner-specific helpers only after detecting that the local environment provides them.
 
 ## Skill Routing
 
-- Use `$gh-account-router` whenever the account, owner, token, remote, repository creation, or push identity matters.
+- Use `$gh-account-router` whenever the local environment has it and the account, owner, token, remote, repository creation, or push identity matters.
 - Use `$gh-actions-release-builder` for `.github/workflows/*.yml`, CI, build artifacts, release automation, and GitHub Pages workflows.
 - Use `$readme-design` before publishing or after major feature work when the README should become more professional, visual, persuasive, or GitHub-friendly.
 - Use `$software-dev-pipeline` when repository work is part of broader product delivery, release packaging, quality gates, or production hardening.
+- If a linked helper skill is unavailable for a subscriber, fall back to plain `gh`, GitHub API, and the procedures in this skill instead of stopping.
+
+## First-Run Decision Tree
+
+1. If the user asks to "upload", "publish", "push", "sync", or "create repo":
+   - Inspect local Git state.
+   - Determine owner/account from remote URL, request text, or `gh api user`.
+   - Push with clean HTTPS remote when possible.
+   - If push fails, read `references/failure-recovery.md` and use API fallback.
+
+2. If the user asks for Actions, build, packaging, release, or Pages:
+   - Read `AGENTS.md` first.
+   - If local build is disallowed or unavailable, create GitHub Actions instead of building locally.
+   - Use `$gh-actions-release-builder` when available.
+
+3. If the user asks for GitHub project polish:
+   - Audit README, topics, license, releases, screenshots, workflows, and Pages.
+   - Use `$readme-design` when available.
+   - Keep claims tied to real repository files or remote state.
+
+4. If the user asks to diagnose GitHub problems:
+   - Run safe status checks first.
+   - Run `scripts/github_upload_probe.py` for repeatable environment diagnostics.
+   - Report the next safest path, not a long list of guesses.
 
 ## Default Workflow
 
@@ -29,8 +55,9 @@ Use this skill as the top-level GitHub operating guide. It is intentionally cros
    - Recovery: push failures, permission mismatch, remote conflicts, branch protection, large files.
 
 3. Choose the safest upload path:
-   - Normal Harzva code sync: HTTPS `git push` with `$gh-account-router` credential helper.
-   - Account-sensitive or failing push: use routed `gh` commands and API fallback.
+   - Generic subscriber default: clean HTTPS remote plus `git push`.
+   - Local managed-account default: HTTPS `git push` with `$gh-account-router` credential helper.
+   - Account-sensitive or failing push: use routed `gh` commands when available, then API fallback.
    - Small file update: GitHub Contents API.
    - Multi-file fallback: Git Data API commit.
    - Binary/package output: `gh release create` or `gh release upload`.
@@ -44,11 +71,15 @@ Use this skill as the top-level GitHub operating guide. It is intentionally cros
 
 ## Full Lifecycle Reference
 
+Read `references/subscriber-onboarding.md` when preparing the skill or a repository for someone who does not share this local machine, account aliases, or Windows paths.
+
 Read `references/lifecycle-playbook.md` when the task involves more than one GitHub area, such as publish + README + Actions + Release.
 
 Read `references/failure-recovery.md` when any upload, push, auth, remote, issue, release, Actions, or Pages operation fails.
 
 Run `scripts/github_upload_probe.py` when you need a cross-platform check of local GitHub connectivity, `gh` auth, repo API access, and optional Contents API upload.
+
+Read `references/operations-matrix.md` when choosing the correct tool for clone, push, issue, PR, Actions, Release, Pages, or fallback upload work.
 
 ## Professional Defaults
 
@@ -58,4 +89,5 @@ Run `scripts/github_upload_probe.py` when you need a cross-platform check of loc
 - Create release notes from real changes, artifacts, and known limitations; do not invent features.
 - Make GitHub Pages deployment reproducible from Actions instead of manual local uploads.
 - Before public publishing, improve README structure with `$readme-design` and verify badges/links reflect actual repo capabilities.
+- For public subscriber-facing repositories, provide a concise README, clear install/use path, and a troubleshooting command that works outside the owner's machine.
 - After changes, report what was changed, what remote URL/branch/release/page was touched, and what still needs GitHub-side verification.
